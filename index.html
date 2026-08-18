@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>¿Cuánto falta para el cumple de Ángeles?</title>
+<meta name="description" content="Cuenta regresiva en tiempo real para el cumpleaños de María de los Ángeles: días, horas, minutos y segundos." />
+<meta property="og:title" content="¿Cuánto falta para el cumple de Ángeles?" />
+<meta property="og:description" content="Cuenta regresiva en tiempo real para el cumpleaños de María de los Ángeles." />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#2b1055" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%82%3C/text%3E%3C/svg%3E" />
+<style>
+  :root{
+    --bg-a: #2b1055;
+    --bg-b: #7597de;
+    --card: #ffffff;
+    --text: #221a3a;
+    --muted: #6a6284;
+    --accent: #ff5d8f;
+    --accent-2: #ffb020;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    min-height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;
+    background:radial-gradient(circle at 20% 20%, var(--bg-b), var(--bg-a) 70%);
+    color:var(--text);
+  }
+
+  .card{
+    width:100%;
+    max-width:560px;
+    background:var(--card);
+    border-radius:28px;
+    padding:40px 32px 32px;
+    text-align:center;
+    box-shadow:0 30px 60px rgba(0,0,0,0.35);
+  }
+
+  .emoji{
+    font-size:44px;
+    line-height:1;
+    margin-bottom:8px;
+  }
+
+  .eyebrow{
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:0 0 6px;
+  }
+
+  .name{
+    font-size:26px;
+    font-weight:800;
+    margin:0 0 6px;
+    color:var(--text);
+  }
+
+  .faltan-label{
+    font-size:15px;
+    font-weight:600;
+    color:var(--muted);
+    margin:0 0 26px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:10px;
+    margin:0 0 26px;
+  }
+  @media (max-width:480px){
+    .grid{grid-template-columns:repeat(2, 1fr);}
+  }
+
+  .unit{
+    background:linear-gradient(180deg, #fafafa, #f0eef7);
+    border-radius:16px;
+    padding:14px 4px 12px;
+  }
+
+  .unit-value{
+    font-size:clamp(30px, 8vw, 44px);
+    font-weight:800;
+    line-height:1;
+    font-variant-numeric:tabular-nums;
+    background:linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    display:inline-block;
+  }
+  .unit-value.tick{
+    animation: pop 0.4s ease;
+  }
+  @keyframes pop{
+    0%{ transform:scale(1); }
+    35%{ transform:scale(1.22); }
+    100%{ transform:scale(1); }
+  }
+
+  .unit-name{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-top:6px;
+  }
+
+  .target-date{
+    font-size:14px;
+    color:var(--muted);
+    border-top:1px solid #eee;
+    padding-top:18px;
+    margin:0;
+  }
+  .target-date b{color:var(--text);}
+
+  .celebrate-emoji{
+    font-size:clamp(48px, 16vw, 72px);
+    margin:10px 0;
+  }
+  .celebrate-text{
+    font-size:22px;
+    font-weight:800;
+    margin:0 0 8px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .unit-value.tick{ animation:none; }
+  }
+</style>
+</head>
+<body>
+  <main class="card">
+    <div class="emoji">🎂</div>
+    <p class="eyebrow">Cuenta regresiva de cumpleaños</p>
+    <h1 class="name" id="personName">—</h1>
+    <p class="faltan-label" id="faltanLabel">Faltan…</p>
+
+    <div class="grid" id="grid">
+      <div class="unit">
+        <span class="unit-value" id="valDias">00</span>
+        <div class="unit-name">Días</div>
+      </div>
+      <div class="unit">
+        <span class="unit-value" id="valHoras">00</span>
+        <div class="unit-name">Horas</div>
+      </div>
+      <div class="unit">
+        <span class="unit-value" id="valMin">00</span>
+        <div class="unit-name">Min</div>
+      </div>
+      <div class="unit">
+        <span class="unit-value" id="valSeg">00</span>
+        <div class="unit-name">Seg</div>
+      </div>
+    </div>
+
+    <p class="target-date" id="targetDate"></p>
+  </main>
+
+  <script>
+    // --- Editar aquí para reutilizar la página con otra persona/fecha ---
+    const PERSON_NAME = "María de los Ángeles";
+    const BIRTH_DAY = 27;   // día del mes
+    const BIRTH_MONTH = 9;  // mes (1 = enero, 12 = diciembre)
+    // ----------------------------------------------------------------
+
+    const MESES = [
+      "enero", "febrero", "marzo", "abril", "mayo", "junio",
+      "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+    ];
+
+    const els = {
+      name: document.getElementById("personName"),
+      faltan: document.getElementById("faltanLabel"),
+      target: document.getElementById("targetDate"),
+      grid: document.getElementById("grid"),
+      dias: document.getElementById("valDias"),
+      horas: document.getElementById("valHoras"),
+      min: document.getElementById("valMin"),
+      seg: document.getElementById("valSeg"),
+    };
+
+    const prev = { dias: null, horas: null, min: null, seg: null };
+
+    els.name.textContent = PERSON_NAME;
+
+    function formatFecha(date) {
+      return `${date.getDate()} de ${MESES[date.getMonth()]} de ${date.getFullYear()}`;
+    }
+
+    function pad2(n) {
+      return String(n).padStart(2, "0");
+    }
+
+    function isBirthdayToday(now) {
+      return now.getMonth() + 1 === BIRTH_MONTH && now.getDate() === BIRTH_DAY;
+    }
+
+    function nextBirthdayMidnight(from) {
+      let year = from.getFullYear();
+      let candidate = new Date(year, BIRTH_MONTH - 1, BIRTH_DAY, 0, 0, 0, 0);
+      if (candidate <= from) {
+        year += 1;
+        candidate = new Date(year, BIRTH_MONTH - 1, BIRTH_DAY, 0, 0, 0, 0);
+      }
+      return candidate;
+    }
+
+    function setUnit(el, key, value) {
+      const text = pad2(value);
+      if (prev[key] !== null && prev[key] !== text) {
+        el.classList.remove("tick");
+        // fuerza reflow para poder re-disparar la animación
+        void el.offsetWidth;
+        el.classList.add("tick");
+      }
+      el.textContent = text;
+      prev[key] = text;
+    }
+
+    function renderCelebration() {
+      els.faltan.textContent = `¡Hoy es el cumpleaños de ${PERSON_NAME}! 🎉`;
+      els.grid.innerHTML = `
+        <div class="celebrate-emoji" style="grid-column:1 / -1;">🎉🎂🎈</div>
+      `;
+      els.target.innerHTML = "";
+    }
+
+    function tick() {
+      const now = new Date();
+
+      if (isBirthdayToday(now)) {
+        renderCelebration();
+        return;
+      }
+
+      const target = nextBirthdayMidnight(now);
+      const diff = target - now;
+
+      const dias = Math.floor(diff / 86400000);
+      const horas = Math.floor((diff % 86400000) / 3600000);
+      const minutos = Math.floor((diff % 3600000) / 60000);
+      const segundos = Math.floor((diff % 60000) / 1000);
+
+      els.faltan.textContent = `Faltan para el cumpleaños de ${PERSON_NAME}`;
+      setUnit(els.dias, "dias", dias);
+      setUnit(els.horas, "horas", horas);
+      setUnit(els.min, "min", minutos);
+      setUnit(els.seg, "seg", segundos);
+      els.target.innerHTML = `Próximo cumpleaños: <b>${formatFecha(target)}</b>`;
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>
