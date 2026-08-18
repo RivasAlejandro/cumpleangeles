@@ -47,22 +47,32 @@ Con eso listo, la forma más simple para un sitio de un solo archivo:
    agregar un registro `A`/`CNAME`). Netlify emite el certificado HTTPS
    solo, sin configuración extra.
 
-### Alternativa: GitHub Pages
+### Alternativa: GitHub Pages (repo ya subido)
 
-1. Sube este proyecto a un repositorio de GitHub (dime la URL del repo,
-   igual que con floreria-web, y lo subo).
-2. En **Settings → Pages**, activa Pages sobre la rama `main`.
-3. El archivo `CNAME` (ya incluido en este proyecto) le dice a GitHub
-   Pages que el dominio es `cuantofaltaparaelcumpledeangeles.com`.
-4. En tu registrador, agrega registros `A` apuntando a las IPs de GitHub
-   Pages:
+Este proyecto ya está en
+[github.com/RivasAlejandro/cumpleangeles](https://github.com/RivasAlejandro/cumpleangeles).
+Para activarlo:
+
+1. Entra al repo → **Settings → Pages**.
+2. En "Build and deployment", **Source: Deploy from a branch**.
+3. Rama: `main`, carpeta: `/ (root)` → **Save**.
+4. GitHub publica el sitio en `https://rivasalejandro.github.io/cumpleangeles/`
+   (tarda 1-2 minutos la primera vez).
+5. El archivo `CNAME` (ya está en el repo) le dice a GitHub Pages que el
+   dominio final es `cuantofaltaparaelcumpledeangeles.com` — en el mismo
+   panel de **Settings → Pages** aparecerá un campo "Custom domain" ya
+   con ese valor; solo falta que el DNS apunte ahí (paso siguiente).
+6. En tu registrador de dominio, agrega registros `A` apuntando a las
+   IPs de GitHub Pages:
    ```
    185.199.108.153
    185.199.109.153
    185.199.110.153
    185.199.111.153
    ```
-   y un `CNAME` para `www` apuntando a `tu-usuario.github.io`.
+   y un `CNAME` para `www` apuntando a `rivasalejandro.github.io`.
+7. Cuando el DNS propague (puede tardar desde minutos hasta ~24h), marca
+   **Enforce HTTPS** en el mismo panel de Settings → Pages.
 
 Cualquiera de las dos es gratis. Netlify es más simple si no quieres usar
 Git; GitHub Pages tiene sentido si de todas formas vas a versionar el
